@@ -19,10 +19,28 @@ function SignupForm() {
     }
   }, [password, confirm]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!password || !confirm || !email || !name) {
-      setError("all fields required");
+      setError("All fields required");
+      return;
+    }
+
+    try {
+      const result = await fetch("api/register", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (result.ok) {
+        const form = event.target;
+        /* Update state */
+        form.reset();
+        console.log("user registered successfully");
+      }
+    } catch (error) {
+      console.log("error while registering user", error);
     }
   };
 
@@ -30,7 +48,7 @@ function SignupForm() {
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-[70%]">
         <h1 className="text-left mb-2 font-bold text-lg">Sign up</h1>
-        <form className=" flex flex-col gap-3">
+        <form className=" flex flex-col gap-3"  onSubmit={handleSubmit}>
           <label htmlFor="name">Full name:</label>
           <input
             type="text"
@@ -76,7 +94,7 @@ function SignupForm() {
           <button
             type="submit"
             className="bg-zinc-400/40 text-white p-2 rounded-lg"
-            onClick={handleSubmit}
+           
           >
             Sign up
           </button>
