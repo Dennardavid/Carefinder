@@ -1,30 +1,83 @@
+"use client";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
 function SignupForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (password && confirm) {
+      if (password !== confirm) {
+        setError("Passwords do not match");
+      } else {
+        setError("");
+      }
+    }
+  }, [password, confirm]);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!password || !confirm || !email || !name) {
+      setError("all fields required");
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-dvh">
+    <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-[70%]">
         <h1 className="text-left mb-2 font-bold text-lg">Sign up</h1>
         <form className=" flex flex-col gap-3">
           <label htmlFor="name">Full name:</label>
-          <input type="text" name="name" id="name" placeholder="Full name" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Full name"
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
           <label htmlFor="email">Email:</label>
-          <input type="email" name="email" id="email" placeholder="Email" />
+          <input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Email"
+            onChange={(event) => {
+              setEmail(event.target.value);
+            }}
+          />
           <label htmlFor="password">Password:</label>
           <input
             type="password"
             name="password"
             id="password"
             placeholder="Password"
+            onChange={(event) => {
+              setPassword(event.target.value);
+            }}
           />
           <label htmlFor="confirmpassword">Confirm Password:</label>
+
           <input
             type="password"
             name="confirmpassword"
             id="confirmpassword"
             placeholder="Confirm Password"
+            onChange={(event) => {
+              setConfirmPassword(event.target.value);
+            }}
           />
-          <button type="submit" className="bg-zinc-400/40 text-white p-2 rounded-lg">
+          <span className="text-red-500">{error}</span>
+          <button
+            type="submit"
+            className="bg-zinc-400/40 text-white p-2 rounded-lg"
+            onClick={handleSubmit}
+          >
             Sign up
           </button>
         </form>
