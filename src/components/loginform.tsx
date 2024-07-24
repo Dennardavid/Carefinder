@@ -7,11 +7,18 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!email || !password) {
+      setError("All fields required");
+      return;
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-[70%]">
         <h1 className="text-left mb-2 font-bold text-lg">Login</h1>
-        <form className=" flex flex-col gap-3">
+        <form className=" flex flex-col gap-3" onSubmit={handleSubmit}>
           <label htmlFor="email">Email:</label>
           <input
             type="email"

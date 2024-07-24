@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function SignupForm() {
   const [name, setName] = useState("");
@@ -8,6 +9,7 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     if (password && confirm) {
@@ -27,16 +29,30 @@ function SignupForm() {
     }
 
     try {
-      const result = await fetch("api/register", {
+      const resultUserExists = await fetch("api/userExists", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const { user } = await resultUserExists.json();
+
+      if (user) {
+        setError("User already exists");
+        return;
+      }
+
+      const resultRegister = await fetch("api/register", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (result.ok) {
+      if (resultRegister.ok) {
         const form = event.target;
         /* Update state */
         form.reset();
+        router.push("/login");
         console.log("user registered successfully");
       }
     } catch (error) {
@@ -48,7 +64,7 @@ function SignupForm() {
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-[70%]">
         <h1 className="text-left mb-2 font-bold text-lg">Sign up</h1>
-        <form className=" flex flex-col gap-3"  onSubmit={handleSubmit}>
+        <form className=" flex flex-col gap-3" onSubmit={handleSubmit}>
           <label htmlFor="name">Full name:</label>
           <input
             type="text"
@@ -94,7 +110,6 @@ function SignupForm() {
           <button
             type="submit"
             className="bg-zinc-400/40 text-white p-2 rounded-lg"
-           
           >
             Sign up
           </button>
